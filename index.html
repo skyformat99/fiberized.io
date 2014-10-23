@@ -51,8 +51,9 @@
 using namespace fibio;
 
 int fibio::main(int argc, char *argv[]) {
-    tcp_listener(7)([](tcp_stream &amp;s){ s &lt;&lt; s.rdbuf(); });
-    return 0;
+    return tcp_listener(7)([](tcp_stream &amp;s){
+        s &lt;&lt; s.rdbuf();
+    }).value();
 }
 </code></pre>
 <hr/>
@@ -76,12 +77,10 @@ bool handler(server::request &amp;req,
 }
 
 int fibio::main(int argc, char *argv[]) {
-    server svr(server::settings{
-        route(path_matches("/*p") &gt;&gt; handler),
-        23456
-    });
-    svr.start();
-    svr.join();
+    return server(server::settings{
+        route(path_("/*p") &gt;&gt; handler),
+        8080,
+    })().value();
 }
 </code></pre>
       </section>
